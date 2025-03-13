@@ -1,6 +1,7 @@
 # Pinia-todo
 
 快速试用：https://piniatodo.netlify.app/
+（第一次见到Pinia的Logo的时候，我就觉得这个菠萝很可爱）
 
 ## Recommended IDE Setup
 
