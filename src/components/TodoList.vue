@@ -17,11 +17,18 @@
       </form>
     </div>
 
-    <div class="space-y-4">
-      <TransitionGroup name="list">
+    <div class="space-y-4 relative">
+      <TransitionGroup 
+        name="task-list"
+        tag="div"
+        class="relative"
+      >
         <div v-for="task in filteredTasks" :key="task.id" 
-          class="flex items-center justify-between p-4 bg-white rounded-lg shadow"
-          :class="taskItemClasses(task)"
+          class="flex items-center justify-between p-4 bg-white rounded-lg shadow task-item"
+          :class="[
+            taskItemClasses(task),
+            { 'shake-animation': taskToDelete === task.id }
+          ]"
         >
           <div class="flex items-center gap-3">
             <TaskCheckbox 
@@ -34,7 +41,7 @@
             />
             <span :class="taskTextClasses(task)">{{ task.title }}</span>
           </div>
-          <DeleteButton @delete="taskStore.deleteTask(task.id)" />
+          <DeleteButton @delete="handleDelete(task.id)" />
         </div>
       </TransitionGroup>
     </div>
@@ -65,6 +72,7 @@ const props = defineProps({
 const router = useRouter()
 const taskStore = useTaskStore()
 const newTask = ref('')
+const taskToDelete = ref(null)
 
 // 计算属性
 const isMyDayView = computed(() => props.filter === 'myDay')
@@ -94,11 +102,17 @@ const handleSubmit = () => {
 const handleStarToggle = (task) => {
   taskStore.toggleFav(task.id)
   if (props.filter === 'myDay' && task.isFav) {
-    // 可以添加过渡动画后再跳转
     setTimeout(() => {
       router.push('/important')
     }, 300)
   }
+}
+
+const handleDelete = async (taskId) => {
+  taskToDelete.value = taskId
+  await new Promise(resolve => setTimeout(resolve, 400)) // 等待抖动动画
+  taskStore.deleteTask(taskId)
+  taskToDelete.value = null
 }
 
 // 样式计算方法
@@ -113,18 +127,42 @@ const taskTextClasses = (task) => ({
 </script>
 
 <style scoped>
-.list-enter-active,
-.list-leave-active {
+.task-item {
   transition: all 0.3s ease;
+  position: relative;
 }
 
-.list-enter-from,
-.list-leave-to {
+.task-list-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.task-list-leave-active {
+  transition: all 0.5s ease-in;
+  position: absolute;
+  width: 100%;
+}
+
+.task-list-enter-from {
   opacity: 0;
   transform: translateX(30px);
 }
 
-.list-move {
-  transition: transform 0.3s ease;
+.task-list-leave-to {
+  opacity: 0;
+  transform: translateY(100px);
+}
+
+.task-list-move {
+  transition: transform 0.5s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.shake-animation {
+  animation: shake 0.4s ease-in-out;
 }
 </style> 
