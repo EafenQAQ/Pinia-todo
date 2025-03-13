@@ -1,11 +1,11 @@
 <template>
   <main class="min-h-screen bg-gray-100">
-    <header class="w-full">
-      <div class="bg-gray-200 flex flex-1 w-full items-center h-[125px] gap-5 justify-center">
+    <header class="w-full bg-gray-200 flex flex-1 items-center h-[125px] justify-center ">
+      <div class="logo-title-container flex items-center gap-5 hover:cursor-pointer" @click="triggerShake">
         <img 
-          class="max-w-[60px] rotate-350"
+          class="max-w-[60px] rotate-350 logo"
           src="./assets/pinia-logo.svg" alt="Logo">
-        <h1 class="text-5xl rotate-2 font-semibold font-fragility text-gray-500">Pinia todo</h1>
+        <h1 class="text-5xl rotate-2 font-semibold font-fragility text-gray-500 title">Pinia todo</h1>
       </div>
     </header>
     
@@ -17,7 +17,21 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import NavBar from './components/NavBar.vue'
+import shakeSound from '@/assets/sound/shake-sound.mp3'
+
+const triggerShake = () => {
+  const logoTitleContainer = document.querySelector('.logo-title-container')
+  logoTitleContainer.classList.add('shake-animation')
+  setTimeout(() => {
+    logoTitleContainer.classList.remove('shake-animation')
+  }, 500) // 动画持续时间
+
+  // 播放抖动音效
+  const audio = new Audio(shakeSound);
+  audio.play();
+}
 </script>
 
 <style>
@@ -40,5 +54,15 @@ import NavBar from './components/NavBar.vue'
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-10px, -10px); }
+  75% { transform: translate(10px, 10px); }
+}
+
+.shake-animation {
+  animation: shake 1s ease-in-out;
 }
 </style>
