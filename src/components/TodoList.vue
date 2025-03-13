@@ -33,7 +33,7 @@
           <div class="flex items-center gap-3">
             <TaskCheckbox 
               :task="task" 
-              @toggle="taskStore.toggleCompleted(task.id)"
+              @toggle="taskChecked(task)"
             />
             <TaskStar 
               :task="task" 
@@ -61,6 +61,8 @@ import TaskCheckbox from './task/TaskCheckbox.vue'
 import TaskStar from './task/TaskStar.vue'
 import DeleteButton from './task/DeleteButton.vue'
 import TaskStats from './task/TaskStats.vue'
+import checkSound from '@/assets/sound/check-sound.mp3'
+import deleteSound from '@/assets/sound/delete-sound.mp3'
 
 const props = defineProps({
   filter: {
@@ -108,6 +110,17 @@ const handleDelete = async (taskId) => {
   await new Promise(resolve => setTimeout(resolve, 400)) // 等待抖动动画
   taskStore.deleteTask(taskId)
   taskToDelete.value = null
+
+  const deleteAudio = new Audio(deleteSound);
+  deleteAudio.play();
+}
+
+const taskChecked = (task) => {
+  taskStore.toggleCompleted(task.id);
+  const checkAudio = new Audio(checkSound);
+  checkAudio.play();
+  console.log('checked!');
+  
 }
 
 // 样式计算方法
