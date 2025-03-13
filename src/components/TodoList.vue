@@ -10,7 +10,7 @@
         >
         <button 
           type="submit"
-          class="px-6 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors"
+          class="px-6 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors cursor-pointer"
         >
           {{ addButtonText }}
         </button>
@@ -101,11 +101,6 @@ const handleSubmit = () => {
 
 const handleStarToggle = (task) => {
   taskStore.toggleFav(task.id)
-  if (props.filter === 'myDay' && task.isFav) {
-    setTimeout(() => {
-      router.push('/important')
-    }, 300)
-  }
 }
 
 const handleDelete = async (taskId) => {

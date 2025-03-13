@@ -1,7 +1,7 @@
 <template>
   <button 
-    @click="handleDelete"
-    class="text-red-500 hover:text-red-600 transition-all duration-200 hover:scale-110"
+    @click="$emit('delete')"
+    class="text-red-500 hover:text-red-600 transition-all duration-200 hover:scale-110 cursor-pointer"
     title="删除任务"
   >
     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -11,22 +11,5 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
-const emit = defineEmits(['delete'])
-const isConfirming = ref(false)
-const confirmTimeout = ref(null)
-
-const handleDelete = () => {
-  if (!isConfirming.value) {
-    isConfirming.value = true
-    confirmTimeout.value = setTimeout(() => {
-      isConfirming.value = false
-    }, 2000)
-  } else {
-    clearTimeout(confirmTimeout.value)
-    isConfirming.value = false
-    emit('delete')
-  }
-}
+defineEmits(['delete'])
 </script> 
