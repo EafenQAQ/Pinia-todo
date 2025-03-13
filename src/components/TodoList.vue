@@ -25,10 +25,13 @@
       >
         <div v-for="task in filteredTasks" :key="task.id" 
           class="flex items-center justify-between p-4 bg-white rounded-lg shadow task-item"
-          :class="[
-            taskItemClasses(task),
-            { 'shake-animation': taskToDelete === task.id }
-          ]"
+          :class="[taskItemClasses(task), { 'shake-animation': taskToDelete === task.id }]"
+          @dblclick="editTask(task)"
+          @mousedown="startLongPress(task)"
+          @touchstart="startLongPress(task)"
+          @mouseup="cancelLongPress"
+          @mouseleave="cancelLongPress"
+          @touchend="cancelLongPress"
         >
           <div class="flex items-center gap-3">
             <TaskCheckbox 
@@ -39,7 +42,8 @@
               :task="task" 
               @toggle="handleStarToggle(task)"
             />
-            <span :class="taskTextClasses(task)">{{ task.title }}</span>
+            <span v-if="editingTask !== task.id" :class="taskTextClasses(task)">{{ task.title }}</span>
+            <input v-else v-model="task.title" @blur="saveTask(task)" @keyup.enter="saveTask(task)" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-pink-500">
           </div>
           <DeleteButton @delete="handleDelete(task.id)" />
         </div>
@@ -75,6 +79,8 @@ const router = useRouter()
 const taskStore = useTaskStore()
 const newTask = ref('')
 const taskToDelete = ref(null)
+const editingTask = ref(null) // 用于跟踪正在编辑的任务
+const longPressTimeout = ref(null) // 用于跟踪长按定时器
 
 // 计算属性
 const isMyDayView = computed(() => props.filter === 'myDay')
@@ -120,7 +126,28 @@ const taskChecked = (task) => {
   const checkAudio = new Audio(checkSound);
   checkAudio.play();
   console.log('checked!');
-  
+}
+
+// 编辑任务
+const editTask = (task) => {
+  editingTask.value = task.id
+}
+
+const saveTask = (task) => {
+  editingTask.value = null
+  taskStore.updateTask(task)
+}
+
+// 长按事件处理
+const startLongPress = (task) => {
+  longPressTimeout.value = setTimeout(() => {
+    editTask(task)
+  }, 500) // 长按时间阈值（500毫秒）
+}
+
+const cancelLongPress = () => {
+  clearTimeout(longPressTimeout.value)
+  longPressTimeout.value = null
 }
 
 // 样式计算方法
@@ -173,4 +200,4 @@ const taskTextClasses = (task) => ({
 .shake-animation {
   animation: shake 0.4s ease-in-out;
 }
-</style> 
+</style>
