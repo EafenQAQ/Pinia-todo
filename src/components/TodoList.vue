@@ -1,6 +1,6 @@
 <template>
   <div class="w-full max-w-2xl mx-auto p-4">
-    <div class="mb-6">
+    <div v-if="filter === 'myDay'" class="mb-6">
       <form @submit.prevent="handleSubmit" class="flex gap-2">
         <input 
           v-model="newTask"
@@ -18,7 +18,7 @@
     </div>
 
     <div class="space-y-4">
-      <div v-for="task in taskStore.tasks" :key="task.id" 
+      <div v-for="task in filteredTasks" :key="task.id" 
         class="flex items-center justify-between p-4 bg-white rounded-lg shadow">
         <div class="flex items-center gap-3">
           <input 
@@ -46,26 +46,41 @@
     </div>
 
     <div class="mt-6 text-center text-gray-600">
-      <p>Total tasks: {{ taskStore.totalCount }}</p>
-      <p>Completed tasks: {{ taskStore.completedCount }}</p>
-      <p>Favorite tasks: {{ taskStore.favCount }}</p>
+      <p>显示任务: {{ filteredTasks.length }} 项</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useTaskStore } from '../stores/todoStores'
+
+const props = defineProps({
+  filter: {
+    type: String,
+    default: 'myDay'
+  }
+})
 
 const taskStore = useTaskStore()
 const newTask = ref('')
 
+const filteredTasks = computed(() => {
+  switch (props.filter) {
+    case 'completed':
+      return taskStore.tasks.filter(task => task.isCompleted)
+    case 'important':
+      return taskStore.tasks.filter(task => task.isFav)
+    case 'myDay':
+    default:
+      return taskStore.tasks.filter(task => !task.isCompleted)
+  }
+})
+
 const handleSubmit = () => {
-  console.log('Form submitted with task:', newTask.value)
   if (newTask.value.trim()) {
     taskStore.addTask(newTask.value.trim())
     newTask.value = ''
-    console.log('Current tasks:', taskStore.tasks)
   }
 }
 </script> 

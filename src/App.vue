@@ -9,15 +9,13 @@
       </div>
     </header>
     
-    <TodoList />
+    <NavBar />
+    <router-view></router-view>
   </main>
 </template>
 
 <script setup>
-import { useTaskStore } from './stores/todoStores';
-import TodoList from './components/TodoList.vue';
-
-const taskStore = useTaskStore();
+import NavBar from './components/NavBar.vue'
 </script>
 
 <style>
