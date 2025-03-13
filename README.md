@@ -1,6 +1,11 @@
 # Pinia-todo
 
-This template should help get you started developing with Vue 3 in Vite.
+快速试用：https://piniatodo.netlify.app/
+（第一次见到Pinia的Logo的时候，我就觉得这个菠萝很可爱）
+
+## 预览
+![image](https://github.com/user-attachments/assets/6aaa0ec7-6f6e-475e-93a6-01a7f4e7fe22)
+
 
 ## Recommended IDE Setup
 
