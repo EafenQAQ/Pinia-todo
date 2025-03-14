@@ -1,5 +1,5 @@
 <template>
-  <main class="font-Raleway flex flex-col items-center justify-center w-full">
+  <main class="flex flex-col items-center justify-center w-full">
     <header class="w-full">
       <div class="bg-gray-200 flex flex-1 w-full items-center h-[125px] gap-5 justify-center">
         <img 
@@ -8,11 +8,15 @@
         <h1 class="text-5xl rotate-2 font-semibold font-fragility text-gray-500">Pinia todo</h1>
       </div>
     </header>
+    <!-- 输入框 -->
+     <div class="addTask my-5">
+       <AddTask />
+     </div>
     <!-- 导航按钮 -->
     <div>
       <button 
         @click="filter = 'all'"
-        class="m-4 py-2 px-4 rounded-md shadow-outline hover:shadow-inner cursor-pointer"
+        class="m-4 py-2 px-4 rounded-md shadow-outline hover:shadow-inner cursor-pointer duration-200 ease-in"
         :class="{ 'bg-Pina': filter === 'all' }"
       >All</button>
       <button 
@@ -21,9 +25,13 @@
         class="m-4 py-2 px-4 rounded-md shadow-outline hover:shadow-inner cursor-pointer"
       >Fav</button>
     </div>
+    <!-- loding -->
+     <div class="my-6" v-if="taskStore.loding">
+        <p>loding...</p>
+     </div>
     <!-- taskDetails -->
     
-    <div v-if="filter === 'all'" class="felx flex-col text-center justify-center w-full">
+    <div v-if="filter === 'all'" class="felx flex-col text-center justify-center w-full duration-200 ease-in">
       <div
       v-for="task in taskStore.tasks" :key="task.id"
       class="flex flex-col items-center justify-center w-full"
@@ -50,9 +58,11 @@
 import { ref } from 'vue';
 import TaskDetails from './components/TaskDetails.vue';
 import { useTaskStore } from './stores/todoStores';
+import AddTask from './components/AddTask.vue';
 
 const taskStore = useTaskStore();
-
+//加载tasks数据
+taskStore.getTasks();
 const filter = ref('all');
 </script>
 
